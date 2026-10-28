@@ -148,7 +148,7 @@ h1,.big,.big2,.hk,.ht{font-family:inherit;letter-spacing:0}.big2{font-weight:800
 .tc{flex:0 0 auto;min-width:330px;padding:18px;margin:0}
 .bars{display:flex;align-items:flex-end;gap:8px;height:140px;margin-top:6px}.bc{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:5px}
 .bb{width:100%;background:var(--ac);border-radius:8px;opacity:.85}.bv{font-size:11px;color:var(--tx);white-space:nowrap}.bl{font-size:13px;color:var(--mu)}
-.pkr{margin-bottom:10px;font-weight:600}.pkb{height:6px;background:var(--bd);border-radius:9px;margin-top:5px;overflow:hidden}.pkb i{display:block;height:100%;background:var(--ac);border-radius:9px}
+.pkr{margin-bottom:10px;font-weight:600}.pkb{height:6px;background:var(--bd);border-radius:999px;margin-top:5px;overflow:hidden}.pkb i{display:block;height:100%;background:var(--ac);border-radius:999px}
 .mrow{display:flex;justify-content:space-between;align-items:center;background:var(--card);border-radius:20px;padding:18px;margin-bottom:8px;font-weight:600;cursor:pointer}
 .ib{background:var(--card);color:var(--tx)}
 
@@ -204,7 +204,7 @@ button{transition:transform .12s ease,background .2s,color .2s,opacity .2s}butto
 
 .obw{padding-bottom:120px}
 .obt{display:flex;align-items:center;gap:14px;margin-bottom:26px;min-height:42px}.ibs{width:42px;flex:none}
-.obp{flex:1;display:flex;gap:6px}.obp i{flex:1;height:5px;border-radius:9px;background:var(--bd);transition:background .3s}.obp i.on{background:var(--ac)}
+.obp{flex:1;display:flex;gap:6px}.obp i{flex:1;height:5px;border-radius:999px;background:var(--bd);transition:background .3s}.obp i.on{background:var(--ac)}
 .obh{font-size:32px;font-weight:800;letter-spacing:-.8px;line-height:1.1;margin-bottom:8px}
 .obs{color:var(--mu);font-size:16px;margin-bottom:22px}
 .obav{display:flex;justify-content:center;margin:8px 0 22px}
@@ -227,7 +227,6 @@ button{transition:transform .12s ease,background .2s,color .2s,opacity .2s}butto
 <nav class="tabs"><button data-a="pg:home"><svg viewBox="0 0 24 24"><path d="M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg></button><button data-a="pg:disc"><svg viewBox="0 0 24 24"><path d="M12 3l2.2 6.8L21 12l-6.8 2.2L12 21l-2.2-6.8L3 12l6.8-2.2z"/></svg></button><button data-a="pg:lib"><svg viewBox="0 0 24 24"><path d="M4 6h2M10 6h10M4 12h2M10 12h10M4 18h2M10 18h10"/></svg></button><button data-a="pg:srch"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></button><button data-a="pg:me" id="navme"></button></nav>
 <div id="app"></div>
 <script>
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const FIREBASE_CONFIG = {
   apiKey: "AIzaSyCayDiFOL8MzCY7I8gxjnqS1VnJsj13XZ4",
   authDomain: "mes-anime.firebaseapp.com",
@@ -245,22 +244,27 @@ async function fbInit(){
   if(!FIREBASE_CONFIG)return;
   try{
     for(const f of ['app','auth','firestore'])await ld('https://www.gstatic.com/firebasejs/10.12.2/firebase-'+f+'-compat.js');
-    firebase.initializeApp(FIREBASE_CONFIG);fb={auth:firebase.auth(),db:firebase.firestore()};
-        firebase.initializeApp(FIREBASE_CONFIG);
+    firebase.initializeApp(FIREBASE_CONFIG);
     fb = { auth: firebase.auth(), db: firebase.firestore() };
     fb.auth.onAuthStateChanged(async u => {
       fauth = true; fuser = u;
-      if (u) {
-        await pull();
-        if (S.user && S.user.guest) S.user = null;
-        lstep = 'home';
-        if (!S.user || !S.user.name) {
-          ob = 1;
-          if (u.displayName && !obd.name) obd.name = u.displayName.split(' ')[0];
+      try {
+        if (u) {
+          await pull();
+          if (S.user && S.user.guest) S.user = null;
+          lstep = 'home';
+          if (!S.user || !S.user.name) {
+            ob = 1;
+            if (u.displayName && !obd.name) obd.name = u.displayName.split(' ')[0];
+          }
         }
+      } catch(err) {
+        console.log("Erreur pull:", err);
       }
       render();
-      if (u && S.user && S.user.name) loadD();
+      if (u && S.user && S.user.name) {
+        try { loadD(); } catch(e){}
+      }
     });
 
     document.addEventListener('visibilitychange',()=>{if(!document.hidden&&fb&&fuser)pull().then(render)});
@@ -295,9 +299,13 @@ async function fbGoogle(){
   const pv=new firebase.auth.GoogleAuthProvider();
   try{
     lerr='';
-    await fb.auth.signInWithRedirect(pv);
+    await fb.auth.signInWithPopup(pv);
   }catch(e){
-    lerr=ferr(e);render();
+    try{
+      await fb.auth.signInWithRedirect(pv);
+    }catch(err){
+      lerr=ferr(err);render();
+    }
   }
 }
 async function fbEmail(){
@@ -347,7 +355,7 @@ function resize(f){return new Promise(r=>{const fr=new FileReader();fr.onload=()
 function fix(d){if(d.total&&d.ep!==''&&d.ep>=d.total){d.ep=d.total;d.status='fini'}return d}
 
 function form(a,p,k,sh){
-  a=a||{title:'',status:'voir',score:'',ep:'',total:'',genre:'',year:'',plat:''};
+  a=a||{title:'',status:'voir',score:'',ep:'',total:'',genre:'',year:'',plat:'',finishedDate:''};
   const so=Object.keys(ST).map(s=>`<option value="${s}"${a.status===s?' selected':''}>${ST[s]}</option>`).join('');
   let no='<option value="">Note —</option>';
   for(let i=10;i>=1;i--)no+=`<option value="${i}"${a.score===i?' selected':''}>${i}/10</option>`;
@@ -355,6 +363,7 @@ function form(a,p,k,sh){
   return `<input id="${p}t" placeholder="Titre" value="${esc(a.title)}">
   <button data-a="fill:${p}" style="width:100%;margin-bottom:6px">Remplir depuis AniList</button><div id="${p}m" class="mu" style="margin-bottom:6px"></div>
   <div class="g"><select id="${p}s">${so}</select><select id="${p}n">${no}</select></div>
+  <div style="margin-bottom:6px"><label class="mu" style="font-size:12px;display:block;margin-bottom:2px">Date de fin (facultative) :</label><input id="${p}fd" type="date" value="${esc(a.finishedDate||'')}"></div>
   ${sh?'<details><summary>Plus de détails</summary>':''}<div class="g"><input id="${p}e" type="number" min="0" inputmode="numeric" placeholder="${U(k)} actuel" value="${nv(a.ep)}"><input id="${p}o" type="number" min="0" inputmode="numeric" placeholder="Total" value="${nv(a.total)}"></div>
   <div class="g"><input id="${p}g" placeholder="Genre" value="${esc(a.genre||'')}"><input id="${p}y" type="number" inputmode="numeric" placeholder="Année" value="${nv(a.year)}"></div>
   <input id="${p}p" placeholder="Plateforme (Crunchyroll, ADN…)" value="${esc(a.plat||'')}">
@@ -363,9 +372,8 @@ function form(a,p,k,sh){
 }
 function read(p,old){
   const v=i=>$(p+i).value.trim(),n=v('n'),e=v('e'),o=v('o'),y=v('y');
-  return fix({title:v('t'),status:$(p+'s').value,score:n?+n:'',ep:e===''?'':+e,total:o===''?'':+o,genre:v('g'),year:y===''?'':+y,plat:v('p'),day:$(p+'d').value===''?'':+$(p+'d').value,poster:tmp[p]!==undefined?tmp[p]:(old?old.poster||'':'')});
+  return fix({title:v('t'),status:$(p+'s').value,score:n?+n:'',finishedDate:v('fd'),ep:e===''?'':+e,total:o===''?'':+o,genre:v('g'),year:y===''?'':+y,plat:v('p'),day:$(p+'d').value===''?'':+$(p+'d').value,poster:tmp[p]!==undefined?tmp[p]:(old?old.poster||'':'')});
 }
-
 
 const hue=t=>{let h=0;for(const c of String(t))h=(h*31+c.charCodeAt(0))%360;return h};
 function tile(a,act,mode){
@@ -388,7 +396,7 @@ function sheet(){
   const a=byId(openId);if(!a)return '';
   const meta=[a.genre,a.year,a.plat].filter(Boolean).join(' · ');
   const pct=a.total?Math.min(100,Math.round((+a.ep||0)/a.total*100)):0;
-  return `<div class="ov" data-a="sx"></div><div class="sheet"><div class="grab"></div><div class="row" style="align-items:flex-start">${a.poster?`<img class="po" src="${a.poster}" alt="">`:''}<div class="sp"><div class="big2">${esc(a.title)}</div><span class="b ${a.status}">${ST[a.status]}</span>${a.score?` <span class="sc">${ico('star',14,1)} ${a.score}/10</span>`:''}<div class="mu">${esc(meta)}</div></div></div>${a.total?`<div class="bar"><i style="width:${pct}%"></i></div><div class="mu">${a.ep||0}/${a.total}</div>`:''}<div class="row" style="margin:10px 0"><button class="p sp" data-a="ep:${a.id}">+1 ${U(a.kind)}</button><button data-a="em:${a.id}">−1</button><button data-a="fav:${a.id}">${ico('star',20,a.fav)}</button></div><details><summary>Modifier la fiche</summary>${form(a,'x',a.kind)}<div class="row"><button class="p sp" data-a="saveE:${a.id}">Enregistrer</button><button data-a="del:${a.id}">Supprimer</button></div></details></div>`;
+  return `<div class="ov" data-a="sx"></div><div class="sheet"><div class="grab"></div><div class="row" style="align-items:flex-start">${a.poster?`<img class="po" src="${a.poster}" alt="">`:''}<div class="sp"><div class="big2">${esc(a.title)}</div><span class="b ${a.status}">${ST[a.status]}</span>${a.score?` <span class="sc">${ico('star',14,1)} ${a.score}/10</span>`:''}<div class="mu">${esc(meta)}</div>${a.finishedDate?`<div class="mu" style="font-size:12px;margin-top:2px">Terminé le : ${esc(a.finishedDate)}</div>`:''}</div></div>${a.total?`<div class="bar"><i style="width:${pct}%"></i></div><div class="mu">${a.ep||0}/${a.total}</div>`:''}<div class="row" style="margin:10px 0"><button class="p sp" data-a="ep:${a.id}">+1 ${U(a.kind)}</button><button data-a="em:${a.id}">−1</button><button data-a="fav:${a.id}">${ico('star',20,a.fav)}</button></div><details><summary>Modifier la fiche</summary>${form(a,'x',a.kind)}<div class="row"><button class="p sp" data-a="saveE:${a.id}">Enregistrer</button><button data-a="del:${a.id}">Supprimer</button></div></details></div>`;
 }
 function rowH(t,L){return L.length?`<div class="rh">${t}</div><div class="hs">${L.map(a=>tile(a,'sh:'+a.id,'m')).join('')}</div>`:''}
 let sopen=false,hf='all';
@@ -681,7 +689,7 @@ async function gql(query,variables){
 const ttl=m=>m.title.english||m.title.romaji;
 const own=m=>S.items.some(a=>a.aid===m.id||[ttl(m),m.title.romaji||''].some(t=>t.toLowerCase()===a.title.toLowerCase()));
 function toItem(m,kind){
-  return {id:uid(),kind,title:ttl(m),status:'voir',score:'',ep:'',total:(kind==='manga'?m.chapters:m.episodes)||'',genre:m.genres[0]?en2fr(m.genres[0]):'',genres:m.genres,year:m.seasonYear||(m.startDate&&m.startDate.year)||'',plat:[...new Set((m.externalLinks||[]).filter(l=>l.type==='STREAMING').map(l=>l.site))].slice(0,3).join(', '),day:'',poster:m.coverImage?m.coverImage.large:'',fav:false,aid:m.id};
+  return {id:uid(),kind,title:ttl(m),status:'voir',score:'',finishedDate:'',ep:'',total:(kind==='manga'?m.chapters:m.episodes)||'',genre:m.genres[0]?en2fr(m.genres[0]):'',genres:m.genres,year:m.seasonYear||(m.startDate&&m.startDate.year)||'',plat:[...new Set((m.externalLinks||[]).filter(l=>l.type==='STREAMING').map(l=>l.site))].slice(0,3).join(', '),day:'',poster:m.coverImage?m.coverImage.large:'',fav:false,aid:m.id};
 }
 async function fill(p){
   const t=$(p+'t').value.trim(),m=$(p+'m');
