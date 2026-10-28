@@ -228,7 +228,11 @@ button{transition:transform .12s ease,background .2s,color .2s,opacity .2s}butto
 <div id="app"></div>
 <script>
 // ===== Connexion en ligne (Firebase) : remplace null par ton bloc firebaseConfig =====
-const FIREBASE_CONFIG=null;
+ const FIREBASE_CONFIG = {
+  projectId: "mes-anime",
+  authDomain: "mes-anime.firebaseapp.com",
+  storageBucket: "mes-anime.appspot.com"
+};
 let fauth=false,fuser=null,fb=null,fsync=0,fmsg='',lmode='in',lerr='',lbusy=false,lmail='',guest=false,carry=false,S0=null,lstep='home';
 const needLogin=()=>!!FIREBASE_CONFIG&&!guest&&!fuser;
 const ld=src=>new Promise((r,j)=>{const s=document.createElement('script');s.src=src;s.onload=r;s.onerror=j;document.head.appendChild(s)});
