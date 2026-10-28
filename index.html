@@ -246,11 +246,23 @@ async function fbInit(){
   try{
     for(const f of ['app','auth','firestore'])await ld('https://www.gstatic.com/firebasejs/10.12.2/firebase-'+f+'-compat.js');
     firebase.initializeApp(FIREBASE_CONFIG);fb={auth:firebase.auth(),db:firebase.firestore()};
-    fb.auth.onAuthStateChanged(async u=>{
-      fauth=true;fuser=u;
-      if(u){await pull();if(S.user&&S.user.guest)S.user=null;lstep='home';if(!S.user){ob=1;if(u.displayName&&!obd.name)obd.name=u.displayName.split(' ')[0]}}
-      render();if(u&&S.user)loadD();
+        firebase.initializeApp(FIREBASE_CONFIG);
+    fb = { auth: firebase.auth(), db: firebase.firestore() };
+    fb.auth.onAuthStateChanged(async u => {
+      fauth = true; fuser = u;
+      if (u) {
+        await pull();
+        if (S.user && S.user.guest) S.user = null;
+        lstep = 'home';
+        if (!S.user || !S.user.name) {
+          ob = 1;
+          if (u.displayName && !obd.name) obd.name = u.displayName.split(' ')[0];
+        }
+      }
+      render();
+      if (u && S.user && S.user.name) loadD();
     });
+
     document.addEventListener('visibilitychange',()=>{if(!document.hidden&&fb&&fuser)pull().then(render)});
   }catch(e){fauth=true;lerr='Connexion impossible. Vérifie ta connexion internet.';render()}
 }
