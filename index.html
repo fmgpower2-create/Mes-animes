@@ -783,8 +783,14 @@ document.addEventListener('click',e=>{
   else if(k==='delTop'){S.tops=S.tops.filter(t=>t.id!==openTop);openTop=null;init()}
   syncRank();nextDuel();save();render();
 });
-render();
-fbInit();
-if(S.user)loadD();
-if('serviceWorker' in navigator&&location.protocol.indexOf('http')===0)navigator.serviceWorker.register('sw.js').catch(()=>{});
-</script></body></html>
+try {
+  render();
+  fbInit();
+  if(S.user)loadD();
+} catch(e) {
+  console.error(e);
+}
+setTimeout(() => {
+  const s = document.getElementById('splash');
+  if (s) { s.classList.add('out'); s.style.display = 'none'; }
+}, 500);
