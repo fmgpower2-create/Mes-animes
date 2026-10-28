@@ -188,7 +188,7 @@ button{transition:transform .12s ease,background .2s,color .2s,opacity .2s}butto
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 
 #splash{position:fixed;inset:0;background:#000;z-index:100;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:26px;transition:opacity .5s ease}
-#splash.out{opacity:0;pointer-events:none}
+#splash.out{opacity:0;pointer-events:none;display:none!important}
 .ring{stroke-dasharray:327;stroke-dashoffset:327;animation:draw 1.1s ease-out forwards}
 .spk{transform-origin:60px 60px;transform:scale(0);animation:pop .6s .75s cubic-bezier(.2,1.5,.4,1) forwards}
 .spt{color:#fff;font-weight:800;letter-spacing:7px;font-size:20px;opacity:0;animation:fd .7s 1.1s ease forwards}
@@ -292,7 +292,7 @@ async function doPush(){
     await fb.db.collection('users').doc(fuser.uid).set({json:j,updated:S.updated||Date.now()});fmsg='';
   }catch(e){fmsg='Sauvegarde en ligne échouée.'}
 }
-function fpush(){if(fb&&fuser){clearTimeout(fsync);fsync=setTimeout(doPush,1500)}}
+function fpush(){if(fb&&fuser){clearTimeout(fsync);fsync=setTimeout(doPush,300)}}
 async function fbGoogle(){
   if(!FIREBASE_CONFIG){lerr='Configuration manquante.';render();return}
   if(!fb){lerr='Service indisponible.';render();return}
@@ -474,7 +474,12 @@ const DAYS=['Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi','Dimanche'];
 const cap=s=>s.charAt(0).toUpperCase()+s.slice(1);
 function mtile(m,i){const own_=own(m);return tile({poster:m.coverImage?m.coverImage.large:'',title:ttl(m),score:m.averageScore?(m.averageScore/10).toFixed(1):'',badge:own_?ico('check',15):'',add:!own_},own_?'':'dadd:'+i)}
 function rowH(t,L){return L.length?`<div class="rh">${t}</div><div class="hs">${L.map(a=>tile(a,'sh:'+a.id,'m')).join('')}</div>`:''}
-function log(it,k){S.hist=S.hist||[];S.hist.push({id:it.id,t:Date.now(),k});if(S.hist.length>400)S.hist.splice(0,S.hist.length-400)}
+function log(it,k){
+  if(k!=='ep' && (!it.finishedDate || it.finishedDate==='Inconnue')) return;
+  S.hist=S.hist||[];
+  S.hist.push({id:it.id,t:Date.now(),k});
+  if(S.hist.length>400)S.hist.splice(0,S.hist.length-400)
+}
 const fmt=m=>m>=60?Math.floor(m/60)+'h'+String(m%60).padStart(2,'0'):m+'min';
 const MN=['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
 function rel(t){const n=new Date(),a=new Date(n.getFullYear(),n.getMonth(),n.getDate()).getTime(),b=new Date(t),d=Math.round((a-new Date(b.getFullYear(),b.getMonth(),b.getDate()).getTime())/864e5);return d<=0?'Aujourd’hui':d===1?'Hier':'Il y a '+d+' jours'}
@@ -681,7 +686,7 @@ function viewRank(){
   });
   return h;
 }
-setTimeout(()=>{const s=$('splash');if(s&&s.classList){s.classList.add('out');setTimeout(()=>{if(s.style)s.style.display='none'},520)}},2100);
+setTimeout(()=>{const s=$('splash');if(s&&s.classList){s.classList.add('out');setTimeout(()=>{if(s.style)s.style.display='none'},520)}},1200);
 let lastSh='';
 function pgAnim(){const a=$('app');if(!a||!a.classList||typeof a.classList.remove!=='function')return;a.classList.remove('pgin');void a.offsetWidth;a.classList.add('pgin');setTimeout(()=>a.classList.remove('pgin'),700)}
 function render(){
