@@ -278,13 +278,11 @@ async function doPush(){
 }
 function fpush(){if(fb&&fuser){clearTimeout(fsync);fsync=setTimeout(doPush,1500)}}
 async function fbGoogle(){
-  if(!FIREBASE_CONFIG){lerr='Configuration manquante.';render();return}
   if(!fb){lerr='Service indisponible.';render();return}
   const pv=new firebase.auth.GoogleAuthProvider();
-  try{
-    lerr='';
-    await fb.auth.signInWithRedirect(pv);
-  }catch(e){
+  try{lerr='';await fb.auth.signInWithPopup(pv)}
+  catch(e){
+    if(e.code==='auth/popup-blocked'||e.code==='auth/operation-not-supported-in-this-environment'){try{await fb.auth.signInWithRedirect(pv);return}catch(x){}}
     lerr=ferr(e);render();
   }
 }
@@ -603,7 +601,7 @@ function syncRank(silent){
     const fin=S.items.filter(a=>a.kind===k&&a.status==='fini'),ids=new Set(fin.map(a=>a.id));
     S.rank[k]=S.rank[k].filter(id=>ids.has(id));
     const have=new Set(S.rank[k]);
-    fin.filter(a=>!have.has(a.id)).sort((x,y)=>(y.score||0)-(a.score||0)).forEach(a=>{
+    fin.filter(a=>!have.has(a.id)).sort((x,y)=>(y.score||0)-(x.score||0)).forEach(a=>{
       const L=S.rank[k];let i=L.findIndex(id=>{const b=S.items.find(z=>z.id===id);return (b.score||0)<(a.score||0)});
       if(i<0)i=L.length;L.splice(i,0,a.id);
       if(!silent&&!S.queue.includes(a.id))S.queue.push(a.id);
