@@ -363,7 +363,15 @@ function form(a,p,k,sh){
   return `<input id="${p}t" placeholder="Titre" value="${esc(a.title)}">
   <button data-a="fill:${p}" style="width:100%;margin-bottom:6px">Remplir depuis AniList</button><div id="${p}m" class="mu" style="margin-bottom:6px"></div>
   <div class="g"><select id="${p}s">${so}</select><select id="${p}n">${no}</select></div>
-  <div style="margin-bottom:6px"><label class="mu" style="font-size:12px;display:block;margin-bottom:2px">Date de fin (facultative) :</label><input id="${p}fd" type="date" value="${esc(a.finishedDate||'')}"></div>
+  <div style="margin-bottom:6px">
+    <label class="mu" style="font-size:12px;display:block;margin-bottom:2px">Date de fin :</label>
+    <div class="row">
+      <input id="${p}fd" type="date" value="${esc(a.finishedDate&&a.finishedDate!=='Inconnue'?a.finishedDate:'')}" style="margin:0;">
+      <label style="font-size:13px;white-space:nowrap;display:flex;align-items:center;gap:4px;">
+        <input id="${p}fduk" type="checkbox" ${a.finishedDate==='Inconnue'?'checked':''} style="width:auto;margin:0;" onchange="if(this.checked)document.getElementById('${p}fd').value=''"> Inconnue
+      </label>
+    </div>
+  </div>
   ${sh?'<details><summary>Plus de détails</summary>':''}<div class="g"><input id="${p}e" type="number" min="0" inputmode="numeric" placeholder="${U(k)} actuel" value="${nv(a.ep)}"><input id="${p}o" type="number" min="0" inputmode="numeric" placeholder="Total" value="${nv(a.total)}"></div>
   <div class="g"><input id="${p}g" placeholder="Genre" value="${esc(a.genre||'')}"><input id="${p}y" type="number" inputmode="numeric" placeholder="Année" value="${nv(a.year)}"></div>
   <input id="${p}p" placeholder="Plateforme (Crunchyroll, ADN…)" value="${esc(a.plat||'')}">
@@ -372,7 +380,21 @@ function form(a,p,k,sh){
 }
 function read(p,old){
   const v=i=>$(p+i).value.trim(),n=v('n'),e=v('e'),o=v('o'),y=v('y');
-  return fix({title:v('t'),status:$(p+'s').value,score:n?+n:'',finishedDate:v('fd'),ep:e===''?'':+e,total:o===''?'':+o,genre:v('g'),year:y===''?'':+y,plat:v('p'),day:$(p+'d').value===''?'':+$(p+'d').value,poster:tmp[p]!==undefined?tmp[p]:(old?old.poster||'':'')});
+  const isUnknown = $(p+'fduk') && $(p+'fduk').checked;
+  const fdValue = $(p+'fd') ? $(p+'fd').value : '';
+  return fix({
+    title:v('t'),
+    status:$(p+'s').value,
+    score:n?+n:'',
+    finishedDate: isUnknown ? 'Inconnue' : fdValue,
+    ep:e===''?'':+e,
+    total:o===''?'':+o,
+    genre:v('g'),
+    year:y===''?'':+y,
+    plat:v('p'),
+    day:$(p+'d').value===''?'':+$(p+'d').value,
+    poster:tmp[p]!==undefined?tmp[p]:(old?old.poster||'':'')
+  });
 }
 
 const hue=t=>{let h=0;for(const c of String(t))h=(h*31+c.charCodeAt(0))%360;return h};
