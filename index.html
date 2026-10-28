@@ -227,11 +227,15 @@ button{transition:transform .12s ease,background .2s,color .2s,opacity .2s}butto
 <nav class="tabs"><button data-a="pg:home"><svg viewBox="0 0 24 24"><path d="M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg></button><button data-a="pg:disc"><svg viewBox="0 0 24 24"><path d="M12 3l2.2 6.8L21 12l-6.8 2.2L12 21l-2.2-6.8L3 12l6.8-2.2z"/></svg></button><button data-a="pg:lib"><svg viewBox="0 0 24 24"><path d="M4 6h2M10 6h10M4 12h2M10 12h10M4 18h2M10 18h10"/></svg></button><button data-a="pg:srch"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></button><button data-a="pg:me" id="navme"></button></nav>
 <div id="app"></div>
 <script>
-// ===== Connexion en ligne (Firebase) : remplace null par ton bloc firebaseConfig =====
- const FIREBASE_CONFIG = {
-  projectId: "mes-anime",
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+  apiKey: "AIzaSyCayDiFOL8MzCY7I8gxjnqS1VnJsj13XZ4",
   authDomain: "mes-anime.firebaseapp.com",
-  storageBucket: "mes-anime.appspot.com"
+  projectId: "mes-anime",
+  storageBucket: "mes-anime.firebasestorage.app",
+  messagingSenderId: "535848253622",
+  appId: "1:535848253622:web:2e1102a3241b1b7bffce17",
+  measurementId: "G-QZFPB2BRGH"
 };
 let fauth=false,fuser=null,fb=null,fsync=0,fmsg='',lmode='in',lerr='',lbusy=false,lmail='',guest=false,carry=false,S0=null,lstep='home';
 const needLogin=()=>!!FIREBASE_CONFIG&&!guest&&!fuser;
