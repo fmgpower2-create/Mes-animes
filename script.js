@@ -258,9 +258,7 @@ function viewStats(){
   const gc={};A.forEach(a=>{const g=(a.genre||'').trim().toLowerCase();if(g)gc[g]=(gc[g]||0)+1});
   const fg=Object.entries(gc).sort((x,y)=>y[1]-x[1])[0];
   const c=(n,l)=>`<div class="card st"><b>${n}</b><span class="mu">${l}</span></div>`;
-  return `<div class="g">${c(fin,'terminés')}${c(avg,'note moyenne')}${c(hrs+' h','temps devant des animes')}${c(chap,'chapitres lus')}</div>${c(fg?esc(fg[0].charAt(0).toUpperCase()+fg[0].slice(1)):'—','genre préféré')}<div class="mu" data-a="hx">Temps estimé à 24 min par épisode.</div>${hxn>=7?`<button data-a="hclr" style="width:100%;margin-top:10px;border-color:var(--ac);color:var(--ac)">${hcs?'Sûr ? Touche encore pour tout effacer':'Vider l’historique'}</button>`:''}
-  <h3>Sauvegarde</h3><div class="mu" style="margin-bottom:6px">Exporter remplit la zone ci-dessous (copie-la dans une note). Pour restaurer, colle ta sauvegarde puis appuie sur Importer.</div>
-  <textarea id="bk" rows="5" placeholder="Ta sauvegarde apparaît ici"></textarea><div class="g"><button class="p" data-a="exp">Exporter</button><button data-a="imp">Importer</button></div><div id="bm" class="mu"></div>`;
+  return `<div class="g">${c(fin,'terminés')}${c(avg,'note moyenne')}${c(hrs+' h','temps devant des animes')}${c(chap,'chapitres lus')}</div>${c(fg?esc(fg[0].charAt(0).toUpperCase()+fg[0].slice(1)):'—','genre préféré')}<div class="mu" data-a="hx">Temps estimé à 24 min par épisode.</div>${hxn>=7?`<button data-a="hclr" style="width:100%;margin-top:10px;border-color:var(--ac);color:var(--ac)">${hcs?'Sûr ? Touche encore pour tout effacer':'Vider l’historique'}</button>`:''}`;
 }
 
 const DAYS=['Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi','Dimanche'];
@@ -318,12 +316,11 @@ async function loadNE(){if(Date.now()-neAt<36e5)return;const ids=S.items.filter(
   try{const d=await gql('query($i:[Int]){Page(perPage:50){media(id_in:$i,type:ANIME){id status nextAiringEpisode{episode airingAt}}}}',{i:ids});NE={};d.Page.media.forEach(m=>{NE[m.id]=m.status==='RELEASING'&&m.nextAiringEpisode?m.nextAiringEpisode:null});if(page==='home')render()}catch(e){neAt=Date.now()-36e5+6e4}}
 function neCards(A){const L=A.filter(a=>a.kind==='anime'&&a.status==='cours'&&a.aid&&NE[a.aid]).map(a=>{const n=NE[a.aid],left=Math.max(0,n.episode-1-(+a.ep||0)),ms=n.airingAt*1000-Date.now(),d=Math.floor(ms/864e5),hh=Math.floor(ms%864e5/36e5);return {a,left,ms,txt:ms<=0?'Sort maintenant':'Ép. '+n.episode+' dans '+(d>0?d+' j ':'')+hh+' h'}}).sort((x,y)=>x.ms-y.ms);
   return L.map(({a,left,txt})=>`<div class="card row" data-a="sh:${a.id}" style="cursor:pointer"><div class="sp"><div class="t">${esc(a.title)}</div><div class="mu">${txt}</div></div>${left>0?`<b style="color:var(--ok)">+${left} à voir</b>`:''}</div>`).join('')}
-const bkRemind=()=>S.items.length>=5&&Date.now()-(S.bkAt||0)>30*864e5&&Date.now()>(S.bkSnz||0)?`<div class="card" style="margin-top:8px"><div class="t">Pense à sauvegarder</div><div class="mu" style="margin:2px 0 8px">Fais ta sauvegarde JSON une fois par mois (Moi, puis Statistiques et sauvegarde).</div><div class="row"><button class="p sp" data-a="bkgo">Sauvegarder</button><button data-a="bkx">Plus tard</button></div></div>`:'';
 function viewHome(){
   const all=S.items,A=all.filter(a=>hk==='all'||a.kind===hk),td=(new Date().getDay()+6)%7;
   let h='<div class="fl" style="margin-top:4px">'+[['all','Tout'],['anime','Animes'],['manga','Mangas']].map(([k,l])=>`<button data-a="hk:${k}" class="${hk===k?'on':''}">${l}</button>`).join('')+'</div>';
   if(!all.length)return h+block('go','Commencer à regarder',null,null,ctaCard());
-  h+=bkRemind();loadNE();
+  loadNE();
   const run=A.filter(a=>a.status==='cours'),vo=A.filter(a=>a.status==='voir');
   {const nc=neCards(A);if(nc)h+=block('ne','Prochains épisodes',null,null,nc)}
   if(run.length)h+=block('run','Continuer à regarder',null,'pg:lib',`<div class="hs">${run.map(ccard).join('')}</div>`);
@@ -363,7 +360,7 @@ function viewMe(){
   +block('fav','Favoris','Récemment ajoutés',null,fav.length?hsr(fav.map(a=>tile(a,'sh:'+a.id,'m'))):'<div class="mu">Mets un titre en favori depuis sa fiche.</div>')
   +block('tps','Temps d’écran','7 derniers jours',null,`<div class="hs"><div class="card tc"><div class="mu">Répartition quotidienne</div><div class="bars">${bars}</div></div><div class="card tc" style="min-width:250px"><div class="mu" style="margin-bottom:10px">Heures de pointe</div>${pkh}</div></div>`)
   +(H.length?block('his2','Historique',null,null,hsr(H)):'')
-  +'<div style="margin-top:22px">'+row('pg:tops','Mes tops et classements')+row('mt:stats','Statistiques et sauvegarde')+row('mt:genres','Genres')+row('mt:plan','Calendrier de la semaine')+row('mt:bilan','Bilan annuel')+row('mt:badges','Succès')+'</div>';
+  +'<div style="margin-top:22px">'+row('pg:tops','Mes tops et classements')+row('mt:stats','Statistiques')+row('mt:genres','Genres')+row('mt:plan','Calendrier de la semaine')+row('mt:bilan','Bilan annuel')+row('mt:badges','Succès')+'</div>';
 }
 function gres(){
   const q=gq.trim().toLowerCase(),gh=typeof runSearch==='function';
@@ -669,8 +666,6 @@ document.addEventListener('click',e=>{
   const el=e.target.closest('[data-a]');if(!el)return;
   const [k,v]=el.dataset.a.split(':');
   const T=S.tops.find(t=>t.id===openTop),it=byId(v);
-  if(k==='exp'){S.bkAt=Date.now();save();const s=JSON.stringify(S);$('bk').value=s;$('bk').select();try{navigator.clipboard.writeText(s)}catch(x){}$('bm').textContent='Sauvegarde prête';return}
-  if(k==='imp'){try{const d=JSON.parse($('bk').value);if(!d||(!d.items&&!d.animes))throw 0;const u=S.user;S=d;if(!S.user)S.user=u;init();save();$('bm').textContent='Importé'}catch(x){$('bm').textContent='Sauvegarde invalide.'}return}
   if(k==='ob'){if(ob===1){const n=$('un');if(n)obd.name=n.value;if(obd.name.trim().length<2){obErr=true;render();return}}obErr=false;ob=+v;render();return}
   if(k==='obb'){ob=Math.max(1,ob-1);render();return}
   if(k==='obskip'){ob=3;render();return}
@@ -685,8 +680,6 @@ document.addEventListener('click',e=>{
   if(k==='tskip'){tie=null;render();return}
   if(k==='ties'){const t=findTie(openRank);if(t)tie={a:t.a,b:t.b};render();return}
   if(k==='merge'){const o=byId($('mg').value),me=byId(openId);if(!o||!me)return;const nm=o.fr||base(o.title);o.fr=nm;me.fr=nm;save();render();return}
-  if(k==='bkgo'){page='me';mt='stats';render();return}
-  if(k==='bkx'){S.bkSnz=Date.now()+7*864e5;save();render();return}
   if(k==='crit'){crit=true;render();return}
   if(k==='cb'){crit=false;render();return}
   if(k==='cd'){ckd=v;render();return}
