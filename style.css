@@ -244,3 +244,14 @@ button{transition:transform .12s ease,background .2s,color .2s,opacity .2s}butto
 .obf{position:fixed;left:0;right:0;bottom:0;max-width:560px;margin:auto;padding:14px 18px calc(18px + env(safe-area-inset-bottom,0px));background:linear-gradient(180deg,transparent,var(--bg) 35%);z-index:5}
 .obn{width:100%;padding:18px;font-size:18px;font-weight:700;border-radius:999px}.obn:disabled{opacity:.4}
 @media(prefers-reduced-motion:reduce){.chk{stroke-dashoffset:0!important}}
+
+/* ---------- 9. Mentions légales ---------- */
+.lg{text-align:center;font-size:13px;color:var(--mu);margin:0;line-height:1.6}
+.lg a{color:var(--tx);text-decoration:underline}
+.legal{padding-bottom:60px}
+.legal h2{font-size:26px;font-weight:800;margin:28px 0 10px;scroll-margin-top:16px}
+.legal h3{font-size:18px;margin:20px 0 6px}
+.legal p,.legal li{color:var(--tx);line-height:1.55}
+.legal a{color:var(--ac)}
+.legal table{width:100%;border-collapse:collapse;font-size:14px;margin:10px 0}
+.legal th,.legal td{border:1px solid var(--bd);padding:8px;text-align:left;vertical-align:top}
