@@ -516,7 +516,13 @@ function viewRank(){
 setTimeout(()=>{const s=$('splash');if(s&&s.classList){s.classList.add('out');setTimeout(()=>{if(s.style)s.style.display='none'},520)}},2100);
 let lastSh='';
 function pgAnim(){const a=$('app');if(!a||!a.classList||typeof a.classList.remove!=='function')return;a.classList.remove('pgin');void a.offsetWidth;a.classList.add('pgin');setTimeout(()=>a.classList.remove('pgin'),700)}
+let tosOk=false;try{tosOk=localStorage.getItem('anime-tos')==='1'}catch(e){}
+let TP=[],tpLoad=false;
+function tosTiles(){return Array.from({length:30},(_,i)=>TP[i]?`<i style="background-image:url('${TP[i]}')"></i>`:`<i style="background:hsl(${(i*47)%360},30%,${14+(i%3)*4}%)"></i>`).join('')}
+async function loadTos(){if(tpLoad)return;tpLoad=true;try{const d=await gql('query{Page(perPage:30){media(type:ANIME,sort:POPULARITY_DESC,isAdult:false){coverImage{large}}}}');TP=d.Page.media.map(m=>m.coverImage&&m.coverImage.large).filter(Boolean);const g=document.querySelector('.tmg');if(g&&!tosOk)g.innerHTML=tosTiles()}catch(e){}}
+function viewTos(){return `<div class="tos"><div class="tmo"><div class="tmg">${tosTiles()}</div></div><div class="tbt"><h2>C’est parti !</h2><p>Confirme que tu acceptes nos <a href="legal.html#cgu">Conditions d’utilisation</a> et que tu as lu notre <a href="legal.html#confidentialite">Politique de confidentialité</a>.</p><button class="p ctb" data-a="tos">Accepter et continuer</button></div></div>`}
 function render(){
+  if(!tosOk){document.body.classList.add('onb');$('app').innerHTML=viewTos();loadTos();return}
   const gate=typeof needLogin==='function'&&needLogin();
   document.body.classList.toggle('onb',gate||!S.user||editP);
   if(gate){$('app').innerHTML=viewLogin();return}
@@ -676,6 +682,7 @@ document.addEventListener('click',e=>{
   if(k==='og'){const i=obd.g.indexOf(v);i<0?obd.g.push(v):obd.g.splice(i,1);render();return}
   if(k==='ok'){obd.k=v;render();return}
   if(k==='obdone'){const prev=S.user||{};S.user=Object.assign({},prev,{name:obd.name.trim(),av:obd.av,genres:obd.g,kind:obd.k});delete S.user.guest;hk=obd.k==='both'?'all':obd.k;bk=obd.k==='manga'?'manga':'anime';editP=false;save();page='home';pgAnim();render();return}
+  if(k==='tos'){tosOk=true;try{localStorage.setItem('anime-tos','1')}catch(e){}render();return}
   if(k==='mt'){mt=v;render();return}
   if(k==='tw'){const w=byId(v),l=byId(v===tie.a?tie.b:tie.a);l.score=nextFree(l);tie=null;syncRank();save();render();return}
   if(k==='tskip'){tie=null;render();return}
