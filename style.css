@@ -255,3 +255,15 @@ button{transition:transform .12s ease,background .2s,color .2s,opacity .2s}butto
 .legal a{color:var(--ac)}
 .legal table{width:100%;border-collapse:collapse;font-size:14px;margin:10px 0}
 .legal th,.legal td{border:1px solid var(--bd);padding:8px;text-align:left;vertical-align:top}
+
+/* ---------- Écran Conditions ---------- */
+.tos{position:fixed;inset:0;background:var(--bg);z-index:30;overflow:hidden}
+.tmo{position:absolute;left:0;right:0;top:0;height:66%;overflow:hidden}
+.tmo:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(14,11,12,.15) 0%,rgba(14,11,12,.55) 45%,var(--bg) 100%)}
+.tmg{position:absolute;left:-35%;right:-35%;top:-25%;display:grid;grid-template-columns:repeat(6,1fr);gap:10px;transform:rotate(-14deg)}
+.tmg i{display:block;aspect-ratio:2/3;border-radius:10px;background-size:cover;background-position:center}
+.tbt{position:absolute;left:0;right:0;bottom:0;max-width:560px;margin:auto;padding:0 24px calc(28px + env(safe-area-inset-bottom,0px));text-align:center;z-index:1}
+.tbt h2{font-size:30px;font-weight:800;letter-spacing:-.5px;margin:0 0 12px}
+.tbt p{color:var(--mu);font-size:17px;line-height:1.5;margin:0 0 26px}
+.tbt a{color:var(--tx);text-decoration:underline}
+.tbt .ctb{width:100%}
