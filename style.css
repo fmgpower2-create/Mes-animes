@@ -267,3 +267,10 @@ button{transition:transform .12s ease,background .2s,color .2s,opacity .2s}butto
 .tbt p{color:var(--mu);font-size:17px;line-height:1.5;margin:0 0 26px}
 .tbt a{color:var(--tx);text-decoration:underline}
 .tbt .ctb{width:100%;box-shadow:none}
+
+/* ---------- Connexion : nouvelle page d'accueil ---------- */
+.lgn{padding-top:6vh}
+.lgh{font-size:32px;font-weight:800;letter-spacing:-.8px;line-height:1.1}
+.lga{display:flex;flex-direction:column;gap:12px;margin:4px 0 14px}
+.lgr{display:flex;align-items:center;gap:14px;font-size:16px}
+.lgi{width:40px;height:40px;border-radius:12px;background:var(--card);display:flex;align-items:center;justify-content:center;color:var(--ac);flex:none}
