@@ -315,3 +315,13 @@ button{transition:transform .12s ease,background .2s,color .2s,opacity .2s}butto
 .pref.on .prk{background:var(--ac);border-color:var(--ac);color:var(--onac,#fff);animation:prp .4s ease}
 .prk .ic path{stroke-dasharray:24;stroke-dashoffset:24;animation:draw .35s .1s ease forwards}
 @media(prefers-reduced-motion:reduce){.prk .ic path{stroke-dashoffset:0!important}}
+
+
+/* ---------- 13. Création du profil : écran 1 animé ---------- */
+@property --cg{syntax:'<color>';inherits:true;initial-value:rgba(0,0,0,0)}
+@property --c{syntax:'<color>';inherits:true;initial-value:#e50914}
+.obtint,.obw,.obf{transition:--cg .5s ease,--c .5s ease}
+.avpop{animation:prp .35s ease}
+.avs,.obsy,.obpw{animation:up .35s cubic-bezier(.2,.8,.2,1) backwards}
+.avo .ic path{stroke-dasharray:24;stroke-dashoffset:24;animation:draw .3s ease forwards}
+@media(prefers-reduced-motion:reduce){.avo .ic path{stroke-dashoffset:0!important}}
