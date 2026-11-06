@@ -474,7 +474,7 @@ function viewOnb(){
     f=`<button class="p obn" data-a="ob:3">${obd.g.length?'Continuer · '+obd.g.length:'Continuer'}</button>`;
   }else if(ob===3){
     const P=[['anime','Animes','Je regarde des épisodes','tv'],['manga','Mangas','Je lis des chapitres','book'],['both','Les deux','Un peu des deux','layers']];
-    b=`<div class="obh">Tu préfères quoi ?</div><div class="obs">On met en avant ce que tu aimes sur ton accueil.</div>`+P.map(([k,l,d,i])=>`<button class="pref${obd.k===k?' on':''}" data-a="ok:${k}"><span class="pi2">${ico(i,26)}</span><span class="sp"><b>${l}</b><br><span class="mu">${d}</span></span>${obd.k===k?ico('check',24):''}</button>`).join('');
+        b=`<div class="obh">Tu préfères quoi ?</div>`+P.map(([k,l,d,i])=>`<button class="pref${obd.k===k?' on':''}" data-a="ok:${k}"><span class="pi2">${ico(i,26)}</span><span class="sp"><b>${l}</b><br><span class="mu">${d}</span></span><span class="prk">${obd.k===k?ico('check',16):''}</span></button>`).join('');
     f='<button class="p obn" data-a="ob:4">Continuer</button>';
   }else{
     const kd={anime:'Animes',manga:'Mangas',both:'Animes et mangas'}[obd.k]||'';
