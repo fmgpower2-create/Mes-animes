@@ -279,7 +279,7 @@ button{transition:transform .12s ease,background .2s,color .2s,opacity .2s}butto
 /* ---------- 10. Création du profil : écran 1 ---------- */
 .obtint{position:fixed;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(120% 55% at 50% 0%,var(--cg),transparent 70%),var(--bg)}
 .pgin>.obtint{animation:none}
-.obav{position:relative;margin:10px 0 26px}
+.obav{position:relative;margin:24px 0 26px}
 .obav:before{content:"";position:absolute;left:50%;top:50%;width:260px;height:260px;transform:translate(-50%,-50%);background:radial-gradient(circle,var(--cg),transparent 65%);pointer-events:none}
 .obav>*{position:relative}
 .obav .avc{box-shadow:0 0 0 5px var(--bg),0 0 0 8px var(--c)}
