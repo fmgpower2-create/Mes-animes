@@ -600,9 +600,10 @@ function gsheet(){const G=dgr;if(!G)return '';
 let dk='anime',dres=null,dmsg='',D={},DM={},dload=false;
 function profile(){
   const W={};let n=0,sum=0,c=0;
+  ((S.user&&S.user.genres)||[]).map(fr2en).filter(Boolean).forEach(g=>W[g]=12);
   S.items.forEach(a=>{if(a.kind!==dk)return;n++;if(a.score){sum+=a.score;c++}
     if(a.score>=7||a.fav)(a.genres&&a.genres.length?a.genres:[fr2en(a.genre)]).filter(Boolean).forEach(g=>W[g]=(W[g]||0)+(a.score||8))});
-  return {n,avg:c?(sum/c).toFixed(1):'—',top:Object.keys(W).length?Object.entries(W).sort((x,y)=>y[1]-x[1]).slice(0,3).map(x=>x[0]):((S.user&&S.user.genres)||[]).map(fr2en).filter(Boolean).slice(0,3)};
+  return {n,avg:c?(sum/c).toFixed(1):'—',top:Object.entries(W).sort((x,y)=>y[1]-x[1]).slice(0,3).map(x=>x[0])};
 }
 async function loadD(){
   if(dload)return;dload=true;D={loading:true};render();
@@ -704,7 +705,7 @@ document.addEventListener('click',e=>{
   if(k==='avrm'){const n=$('un');if(n)obd.name=n.value;obd.photo='';obd.mode='init';render();return}
   if(k==='og'){const i=obd.g.indexOf(v);i<0?obd.g.push(v):obd.g.splice(i,1);render();return}
   if(k==='ok'){obd.k=v;render();return}
-  if(k==='obdone'){const prev=S.user||{},pv=obPrev();S.user=Object.assign({},prev,{name:obd.name.trim(),av:obd.av,sym:pv.sym,photo:pv.photo,genres:obd.g,kind:obd.k});delete S.user.guest;hk=obd.k==='both'?'all':obd.k;bk=obd.k==='manga'?'manga':'anime';editP=false;save();page='home';pgAnim();render();return}
+    if(k==='obdone'){const prev=S.user||{},pv=obPrev();S.user=Object.assign({},prev,{name:obd.name.trim(),av:obd.av,sym:pv.sym,photo:pv.photo,genres:obd.g,kind:obd.k});delete S.user.guest;hk=obd.k==='both'?'all':obd.k;bk=obd.k==='manga'?'manga':'anime';dk=obd.k==='manga'?'manga':'anime';editP=false;save();page='home';pgAnim();dload=false;D={};render();loadD();return}
   if(k==='tos'){tosOk=true;try{localStorage.setItem('anime-tos','1')}catch(e){}render();return}
   if(k==='mt'){mt=v;render();return}
   if(k==='tw'){const w=byId(v),l=byId(v===tie.a?tie.b:tie.a);l.score=nextFree(l);tie=null;syncRank();save();render();return}
