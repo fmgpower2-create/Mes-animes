@@ -475,6 +475,9 @@ function viewOnb(){
 }
 document.addEventListener('input',e=>{if(e.target.id==='un'){obd.name=e.target.value;const p=$('avp');if(p)p.innerHTML=avatar({name:obd.name||'?',av:obd.av},104);const b=$('obn');if(b)b.disabled=obd.name.trim().length<2}});
 function syncRank(silent){
+  // Définition de la fonction fk ajoutée ici pour corriger le bug
+  const fk = (a) => norm(a.fr || base(a.title));
+
   S.items=S.items||[];
   ['anime','manga'].forEach(k=>{
     const all=S.items.filter(a=>a.kind===k&&a.status==='fini'),gm={};all.forEach(a=>(gm[fk(a)]=gm[fk(a)]||[]).push(a));
@@ -489,6 +492,7 @@ function syncRank(silent){
   });
   S.queue=S.queue.filter(id=>S.items.some(a=>a.id===id&&a.status==='fini'));
 }
+
 function startDuel(id){const a=byId(id);if(!a)return;const list=S.rank[a.kind].filter(x=>x!==id);if(list.length)duel={id,kind:a.kind,list,lo:0,hi:list.length}}
 function duelPick(newWins){
   const d=duel,mid=(d.lo+d.hi)>>1;
