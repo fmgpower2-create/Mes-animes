@@ -471,7 +471,7 @@ function viewOnb(){
     f=`<button class="p obn" id="obn" data-a="ob:2"${nm.length<2?' disabled':''}>Continuer</button>`;
   }else if(ob===2){
         b=`<div class="obh">Tes genres préférés</div><div class="obgr">${OBG.map(g=>`<button class="chp${obd.g.includes(g)?' on':''}" data-a="og:${g}">${g}</button>`).join('')}</div>`;
-    f=`<button class="p obn" data-a="ob:3">${obd.g.length?'Continuer · '+obd.g.length:'Continuer'}</button>`;
+       f=`<button class="p obn" id="obn2" data-a="ob:3">${obd.g.length?'Continuer · '+obd.g.length:'Continuer'}</button>`;
   }else if(ob===3){
     const P=[['anime','Animes','Je regarde des épisodes','tv'],['manga','Mangas','Je lis des chapitres','book'],['both','Les deux','Un peu des deux','layers']];
         b=`<div class="obh">Tu préfères quoi ?</div>`+P.map(([k,l,d,i])=>`<button class="pref${obd.k===k?' on':''}" data-a="ok:${k}"><span class="pi2">${ico(i,26)}</span><span class="sp"><b>${l}</b><br><span class="mu">${d}</span></span><span class="prk">${obd.k===k?ico('check',16):''}</span></button>`).join('');
@@ -703,8 +703,8 @@ document.addEventListener('click',e=>{
     if(k==='avmode'){const n=$('un');if(n)obd.name=n.value;obTab=v;render();return}
     if(k==='avsym'){const n=$('un');if(n)obd.name=n.value;if(obd.mode==='sym'&&obd.sym===v)obd.mode='init';else{obd.sym=v;obd.mode='sym'}render();return}
   if(k==='avrm'){const n=$('un');if(n)obd.name=n.value;obd.photo='';obd.mode='init';render();return}
-  if(k==='og'){const i=obd.g.indexOf(v);i<0?obd.g.push(v):obd.g.splice(i,1);render();return}
-  if(k==='ok'){obd.k=v;render();return}
+   if(k==='og'){const i=obd.g.indexOf(v);i<0?obd.g.push(v):obd.g.splice(i,1);document.querySelectorAll('.chp').forEach(b=>{if(b.dataset.a==='og:'+v)b.classList.toggle('on',i<0)});const n=$('obn2');if(n)n.textContent=obd.g.length?'Continuer · '+obd.g.length:'Continuer';return}
+    if(k==='ok'){obd.k=v;document.querySelectorAll('.pref').forEach(b=>{const on=b.dataset.a==='ok:'+v;b.classList.toggle('on',on);const r=b.querySelector('.prk');if(r)r.innerHTML=on?ico('check',16):''});if(navigator.vibrate)navigator.vibrate(8);return}
     if(k==='obdone'){const prev=S.user||{},pv=obPrev();S.user=Object.assign({},prev,{name:obd.name.trim(),av:obd.av,sym:pv.sym,photo:pv.photo,genres:obd.g,kind:obd.k});delete S.user.guest;hk=obd.k==='both'?'all':obd.k;bk=obd.k==='manga'?'manga':'anime';dk=obd.k==='manga'?'manga':'anime';editP=false;save();page='home';pgAnim();dload=false;D={};render();loadD();return}
   if(k==='tos'){tosOk=true;try{localStorage.setItem('anime-tos','1')}catch(e){}render();return}
   if(k==='mt'){mt=v;render();return}
