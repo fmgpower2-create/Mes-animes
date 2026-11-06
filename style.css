@@ -321,6 +321,25 @@ button{transition:transform .12s ease,background .2s,color .2s,opacity .2s}butto
 @property --cg{syntax:'<color>';inherits:true;initial-value:rgba(0,0,0,0)}
 @property --c{syntax:'<color>';inherits:true;initial-value:#e50914}
 .obtint,.obw,.obf{transition:--cg .5s ease,--c .5s ease}
+
+
+/* ---------- 14. Création du profil : écran 4 ---------- */
+@keyframes ofb{0%{opacity:1;transform:rotate(var(--a)) translateY(-54px) scale(1)}100%{opacity:0;transform:rotate(var(--a)) translateY(-96px) scale(.2)}}
+.obfin{text-align:center;padding-top:10px}
+.ofav{position:relative;width:140px;height:140px;margin:26px auto 26px}
+.ofav:before{content:"";position:absolute;left:50%;top:50%;width:300px;height:300px;transform:translate(-50%,-50%);background:radial-gradient(circle,var(--cg),transparent 65%);pointer-events:none}
+.ofr{position:absolute;inset:0;width:100%;height:100%}
+.ofrg{stroke-dasharray:402;stroke-dashoffset:402;animation:draw 1s ease-out forwards}
+.ofa{position:absolute;inset:14px;display:flex;animation:prp .6s .5s cubic-bezier(.2,1.4,.4,1) backwards}
+.ofa .avc{box-shadow:0 0 0 4px var(--bg)}
+.ofk{position:absolute;right:2px;bottom:2px;width:36px;height:36px;border-radius:50%;background:var(--ac);color:var(--onac,#fff);border:4px solid var(--bg);display:flex;align-items:center;justify-content:center;animation:prp .5s 1s backwards}
+.ofk .ic path{stroke-dasharray:24;stroke-dashoffset:24;animation:draw .35s 1.15s ease forwards}
+.ofs{position:absolute;left:50%;top:50%;width:8px;height:8px;margin:-4px 0 0 -4px;border-radius:50%;background:var(--ac);opacity:0;animation:ofb .8s .85s ease-out forwards}
+.obfin .obh{animation:up .5s .9s cubic-bezier(.2,.8,.2,1) backwards}
+.obfin .ofm{margin-bottom:22px;animation:up .5s 1s cubic-bezier(.2,.8,.2,1) backwards}
+.ofc{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.ofc .chp{padding:8px 14px;font-size:14px;animation:up .4s cubic-bezier(.2,.8,.2,1) backwards;animation-delay:calc(1.1s + var(--i)*70ms)}
+@media(prefers-reduced-motion:reduce){.ofrg,.ofk .ic path{stroke-dashoffset:0!important}}
 .avpop{animation:prp .35s ease}
 .avs,.obsy,.obpw{animation:up .35s cubic-bezier(.2,.8,.2,1) backwards}
 .avo .ic path{stroke-dasharray:24;stroke-dashoffset:24;animation:draw .3s ease forwards}
