@@ -294,3 +294,9 @@ button{transition:transform .12s ease,background .2s,color .2s,opacity .2s}butto
 .avs .avo{display:flex;align-items:center;justify-content:center;width:48px;height:48px}
 .avs .avo.on{border-color:transparent;box-shadow:0 0 0 3px var(--bg),0 0 0 5px var(--tx)}
 .obw .chp.on,.obf .obn{color:var(--onac,#fff)}
+
+
+/* ---------- 11. Création du profil : écran 2 ---------- */
+.obh+.obgr{margin-top:22px}
+.obgr{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.obgr .chp{justify-content:center;min-width:0;padding:15px 10px;font-size:16px;transition:background .2s,color .2s,border-color .2s
