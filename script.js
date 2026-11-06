@@ -442,11 +442,21 @@ function viewBadges(){
   return `<div class="hero"><div class="big">${got}/${B.length}</div><div class="mu">succès débloqués</div></div>`+B.map(b=>{const ok=b[3]>=b[4];return `<div class="card row" style="${ok?'':'opacity:.6'}"><div class="bi" style="${ok?'':'color:var(--mu)'}">${ico(b[0],26)}</div><div class="sp"><div class="t">${b[1]}</div><div class="mu">${b[2]}</div><div class="bar"><i style="width:${Math.min(100,b[3]/b[4]*100)}%"></i></div></div><div class="sc">${Math.min(b[3],b[4])}/${b[4]}</div></div>`}).join('');
 }
 
-let ob=1,obd={name:'',av:'#e50914',g:[],k:'both'},mt='',obErr=false,editP=false,lastOb=0;
+let ob=1,obd={name:'',av:'#e50914',g:[],k:'both',sym:'',photo:'',mode:'init'},mt='',obErr=false,editP=false,lastOb=0;
 const IP={mail:'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/>',bm:'<path d="M6 3h12v18l-6-4-6 4z"/>',disc:'<path d="M12 3l2.2 6.8L21 12l-6.8 2.2L12 21l-2.2-6.8L3 12l6.8-2.2z"/>',flame:'<path d="M12 3c.5 3 5 5.5 5 10.5a5 5 0 0 1-10 0c0-2 1-3.5 2.5-4.5.2 1.8 1 2.5 1.8 2.8C11 9 10.5 6 12 3z"/>',eye:'<path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',down:'<circle cx="12" cy="12" r="10"/><path d="M8 10l4 4 4-4"/>',chev:'<path d="M9 6l6 6-6 6"/>',back:'<path d="M15 6l-6 6 6 6"/>',cal:'<rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/>',sliders:'<path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/>',star:'<path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/>',check:'<path d="M5 12l5 5 9-10"/>',book:'<path d="M4 4h6a3 3 0 0 1 3 3v13a2 2 0 0 0-2-2H4zM20 4h-6a3 3 0 0 0-3 3v13a2 2 0 0 1 2-2h7z"/>',tv:'<rect x="3" y="6" width="18" height="12" rx="2"/><path d="M8 21h8"/>',clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',trophy:'<path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0zM17 5h3v2a3 3 0 0 1-3 3M7 5H4v2a3 3 0 0 0 3 3"/>',medal:'<circle cx="12" cy="15" r="6"/><path d="M8.5 3l3.5 6M15.5 3L12 9"/>',play:'<path d="M7 4l13 8-13 8z"/>',layers:'<path d="M12 3l9 5-9 5-9-5zM3 13l9 5 9-5"/>',spark:'<path d="M12 3l2 6 6 2-6 2-2 6-2-6-6-2 6-2z"/>',flag:'<path d="M5 21V4M5 4h11l-2 4 2 4H5"/>',search:'<circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/>',x:'<path d="M6 6l12 12M18 6L6 18"/>'};
 const ico=(n,sz,fill)=>`<svg class="ic" viewBox="0 0 24 24" style="width:${sz||18}px;height:${sz||18}px;${fill?'fill:currentColor;':''}"><g>${IP[n]}</g></svg>`;
+Object.assign(IP,{bolt:'<path d="M13 2L4 14h7l-1 8 9-12h-7z"/>',heart:'<path d="M12 20s-7-4.5-7-10a4 4 0 0 1 7-2.5A4 4 0 0 1 19 10c0 5.5-7 10-7 10z"/>',moon:'<path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/>',ghost:'<path d="M5 21V11a7 7 0 0 1 14 0v10l-2.3-2-2.4 2-2.3-2-2.3 2-2.4-2z"/><path d="M9.5 11h.01M14.5 11h.01"/>',crown:'<path d="M3 8l4.5 4L12 5l4.5 7L21 8l-2 11H5z"/>',cam:'<path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/>'});
+const SYM=['star','flame','bolt','heart','moon','ghost','crown','eye','trophy','spark','book','play'];
+const onC=h=>{const [r,g,b]=[1,3,5].map(i=>parseInt(h.substr(i,2),16));return (r*299+g*587+b*114)/1000>150?'#111':'#fff'};
+const hexA=(h,a)=>{const [r,g,b]=[1,3,5].map(i=>parseInt(h.substr(i,2),16));return `rgba(${r},${g},${b},${a})`};
+const obSt=()=>`--c:${obd.av};--ac:${obd.av};--cg:${hexA(obd.av,.4)};--onac:${onC(obd.av)}`;
+const obPrev=()=>({name:obd.name||'?',av:obd.av,sym:obd.mode==='sym'?obd.sym:'',photo:obd.mode==='photo'?obd.photo:''});
+function cropSq(f,n){return new Promise(r=>{const fr=new FileReader();fr.onload=()=>{const im=new Image();im.onload=()=>{const s=Math.min(im.width,im.height),c=document.createElement('canvas');c.width=c.height=n;c.getContext('2d').drawImage(im,(im.width-s)/2,(im.height-s)/2,s,s,0,0,n,n);r(c.toDataURL('image/jpeg',.8))};im.onerror=()=>r('');im.src=fr.result};fr.onerror=()=>r('');fr.readAsDataURL(f)})}
 const AV=['#e50914','#ff6b35','#f5b301','#1aa36f','#2d9cdb','#7c5cff','#e84393','#8e8e93'];
-function avatar(u,sz){const c=u&&u.av&&u.av[0]==='#'?u.av:AV[0];return `<span class="avc" style="background:linear-gradient(135deg,${c},${shade(c,.6)});width:${sz}px;height:${sz}px;font-size:${Math.round(sz*.46)}px">${esc(((u&&u.name)||'?').charAt(0).toUpperCase())}</span>`}
+function avatar(u,sz){const c=u&&u.av&&u.av[0]==='#'?u.av:AV[0],bg=`background:linear-gradient(135deg,${c},${shade(c,.6)});width:${sz}px;height:${sz}px`;
+  if(u&&u.photo)return `<span class="avc" style="${bg};overflow:hidden"><img src="${u.photo}" alt="" style="width:100%;height:100%;object-fit:cover"></span>`;
+  if(u&&u.sym&&IP[u.sym])return `<span class="avc" style="${bg}">${ico(u.sym,Math.round(sz*.52))}</span>`;
+  return `<span class="avc" style="${bg};font-size:${Math.round(sz*.46)}px">${esc(((u&&u.name)||'?').charAt(0).toUpperCase())}</span>`}
 
 const OBG=['Action','Aventure','Comédie','Drame','Fantasy','Horreur','Mystère','Romance','Science-fiction','Sport','Surnaturel','Psychologique','Tranche de vie','Thriller','Mecha','Musique'];
 const shade=(h,f)=>'#'+[1,3,5].map(i=>Math.round(parseInt(h.substr(i,2),16)*f).toString(16).padStart(2,'0')).join('');
@@ -457,7 +467,7 @@ function viewOnb(){
   const head=`<div class="obt">${back}${bars}${skip}</div>`,nm=obd.name.trim();
   let b,f;
   if(ob===1){
-    b=`<div class="obh">Comment t’appelles-tu ?</div><div class="obs">C’est le nom qui s’affichera sur ton profil.</div><div class="obav"><div id="avp">${avatar({name:obd.name||'?',av:obd.av},104)}</div></div><input id="un" class="obin" placeholder="Ton prénom ou pseudo" value="${esc(obd.name)}" maxlength="24" autocomplete="off">${obErr?'<div class="oberr">Entre au moins 2 caractères.</div>':''}<div class="obl">Choisis ta couleur</div><div class="avs">${AV.map(a=>`<button data-a="av:${a}" class="avo${obd.av===a?' on':''}" style="background:linear-gradient(135deg,${a},${shade(a,.6)})"></button>`).join('')}</div>`;
+        b=`<div class="obh">Comment t’appelles-tu ?</div><div class="obs">C’est le nom qui s’affichera sur ton profil.</div><div class="obav"><div id="avp">${avatar(obPrev(),104)}</div></div><input id="un" class="obin" placeholder="Ton prénom ou pseudo" value="${esc(obd.name)}" maxlength="24" autocomplete="off">${obErr?'<div class="oberr">Entre au moins 2 caractères.</div>':''}<div class="obl">Ton avatar</div><div class="obm">${[['init','Initiale'],['sym','Symbole'],['photo','Photo']].map(([k,l])=>`<button data-a="avmode:${k}" class="${obd.mode===k?'on':''}">${l}</button>`).join('')}</div>${obd.mode==='sym'?`<div class="obsy">${SYM.map(s=>`<button data-a="avsym:${s}" class="${obd.sym===s?'on':''}" aria-label="${s}">${ico(s,26)}</button>`).join('')}</div>`:''}${obd.mode==='photo'?`<div class="obpw"><label class="obph">${ico('cam',20)} ${obd.photo?'Changer la photo':'Choisir une photo'}<input id="avf" type="file" accept="image/*" hidden></label>${obd.photo?'<button class="lnk" data-a="avrm">Retirer</button>':''}</div><div class="obs" style="text-align:center;font-size:13px">Ta photo n’est visible que par toi, dans ton profil.</div>`:''}<div class="obl">Couleur</div><div class="avs">${AV.map(a=>`<button data-a="av:${a}" class="avo${obd.av===a?' on':''}" aria-label="Couleur" style="background:linear-gradient(135deg,${a},${shade(a,.6)});color:${onC(a)}">${obd.av===a?ico('check',22):''}</button>`).join('')}</div>`;
     f=`<button class="p obn" id="obn" data-a="ob:2"${nm.length<2?' disabled':''}>Continuer</button>`;
   }else if(ob===2){
     b=`<div class="obh">Tes genres préférés</div><div class="obs">Choisis-en quelques-uns pour recevoir de meilleures recommandations.</div><div class="gc2">${OBG.map(g=>`<button class="chp${obd.g.includes(g)?' on':''}" data-a="og:${g}">${obd.g.includes(g)?ico('check',16):''}${g}</button>`).join('')}</div><div class="obs" style="margin-top:16px">${obd.g.length} choisi${obd.g.length>1?'s':''}</div>`;
@@ -471,9 +481,9 @@ function viewOnb(){
     b=`<div class="obdn"><svg viewBox="0 0 120 120" width="120" height="120"><circle class="ring" cx="60" cy="60" r="52" fill="none" stroke="var(--ac)" stroke-width="5" stroke-linecap="round" transform="rotate(-90 60 60)"/><path class="chk" d="M38 62l16 16 30-34" fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="obh" style="text-align:center">${editP?'Profil mis à jour':'Bienvenue, '+esc(nm)+' !'}</div><div class="card obcard">${avatar({name:nm,av:obd.av},64)}<div class="sp"><div class="t" style="font-size:20px">${esc(nm)}</div><div class="mu">${kd}</div></div></div>${obd.g.length?`<div class="gc2" style="justify-content:center">${obd.g.slice(0,6).map(g=>`<span class="chp on">${g}</span>`).join('')}</div>`:''}`;
     f=`<button class="p obn" data-a="obdone">${editP?'Enregistrer':'C’est parti'}</button>`;
   }
-  return `<div class="obw">${head}${b}</div><div class="obf">${f}</div>`;
+    return `<div class="obtint" style="${obSt()}"></div><div class="obw" style="${obSt()}">${head}${b}</div><div class="obf" style="${obSt()}">${f}</div>`;
 }
-document.addEventListener('input',e=>{if(e.target.id==='un'){obd.name=e.target.value;const p=$('avp');if(p)p.innerHTML=avatar({name:obd.name||'?',av:obd.av},104);const b=$('obn');if(b)b.disabled=obd.name.trim().length<2}});
+document.addEventListener('input',e=>{if(e.target.id==='un'){obd.name=e.target.value;const p=$('avp');if(p)p.innerHTML=avatar(obPrev(),104);const b=$('obn');if(b)b.disabled=obd.name.trim().length<2}});
 function syncRank(silent){
   // Définition de la fonction fk ajoutée ici pour corriger le bug
   const fk = (a) => norm(a.fr || base(a.title));
@@ -676,6 +686,7 @@ document.addEventListener('change',e=>{
   const t=e.target;
   if(t.id==='so'){sort=t.value;$('lst').innerHTML=listHtml()}
   else if(t.tagName==='SELECT'&&t.id.length===2&&t.id[1]==='w'){const l=$(t.id+'l');if(l)l.style.display=t.value==='date'?'':'none'}
+  else if(t.id==='avf'&&t.files[0]){cropSq(t.files[0],256).then(d=>{const n=$('un');if(n)obd.name=n.value;if(d){obd.photo=d;obd.mode='photo'}render()})}
   else if(t.type==='file'&&t.files[0]){const p=t.id[0];resize(t.files[0]).then(d=>{tmp[p]=d})}
 });
 document.addEventListener('click',e=>{
@@ -686,11 +697,14 @@ document.addEventListener('click',e=>{
   if(k==='obb'){ob=Math.max(1,ob-1);render();return}
   if(k==='obskip'){ob=3;render();return}
   if(k==='obx'){editP=false;render();return}
-  if(k==='pe'){const u=S.user||{};obd={name:u.name||'',av:u.av||'#e50914',g:(u.genres||[]).slice(),k:u.kind||'both'};ob=1;editP=true;mt='';page='home';render();return}
+  if(k==='pe'){const u=S.user||{};obd={name:u.name||'',av:u.av||'#e50914',g:(u.genres||[]).slice(),k:u.kind||'both',sym:u.sym||'',photo:u.photo||'',mode:u.photo?'photo':u.sym?'sym':'init'};ob=1;editP=true;mt='';page='home';render();return}
   if(k==='av'){const n=$('un');if(n)obd.name=n.value;obd.av=v;render();return}
+  if(k==='avmode'){const n=$('un');if(n)obd.name=n.value;obd.mode=v;if(v==='sym'&&!obd.sym)obd.sym=SYM[0];render();return}
+  if(k==='avsym'){const n=$('un');if(n)obd.name=n.value;obd.sym=v;obd.mode='sym';render();return}
+  if(k==='avrm'){const n=$('un');if(n)obd.name=n.value;obd.photo='';obd.mode='init';render();return}
   if(k==='og'){const i=obd.g.indexOf(v);i<0?obd.g.push(v):obd.g.splice(i,1);render();return}
   if(k==='ok'){obd.k=v;render();return}
-  if(k==='obdone'){const prev=S.user||{};S.user=Object.assign({},prev,{name:obd.name.trim(),av:obd.av,genres:obd.g,kind:obd.k});delete S.user.guest;hk=obd.k==='both'?'all':obd.k;bk=obd.k==='manga'?'manga':'anime';editP=false;save();page='home';pgAnim();render();return}
+  if(k==='obdone'){const prev=S.user||{},pv=obPrev();S.user=Object.assign({},prev,{name:obd.name.trim(),av:obd.av,sym:pv.sym,photo:pv.photo,genres:obd.g,kind:obd.k});delete S.user.guest;hk=obd.k==='both'?'all':obd.k;bk=obd.k==='manga'?'manga':'anime';editP=false;save();page='home';pgAnim();render();return}
   if(k==='tos'){tosOk=true;try{localStorage.setItem('anime-tos','1')}catch(e){}render();return}
   if(k==='mt'){mt=v;render();return}
   if(k==='tw'){const w=byId(v),l=byId(v===tie.a?tie.b:tie.a);l.score=nextFree(l);tie=null;syncRank();save();render();return}
