@@ -467,7 +467,7 @@ const OBG=['Action','Aventure','Comédie','Drame','Fantasy','Horreur','Mystère'
 const shade=(h,f)=>'#'+[1,3,5].map(i=>Math.round(parseInt(h.substr(i,2),16)*f).toString(16).padStart(2,'0')).join('');
 function viewOnb(){
   const bars='<div class="obp">'+[1,2,3,4].map(i=>`<i class="${i<=ob?'on':''}"></i>`).join('')+'</div>';
-  const back=ob>1&&ob<4?`<button class="ib" data-a="obb">${ico('back',20)}</button>`:(ob===1&&editP?`<button class="ib" data-a="obx">${ico('x',20)}</button>`:'<span class="ibs"></span>');
+  const back=ob>1?`<button class="ib" data-a="obb">${ico('back',20)}</button>`:(ob===1&&editP?`<button class="ib" data-a="obx">${ico('x',20)}</button>`:'<span class="ibs"></span>');
   const skip=ob===2?'<button class="lnk" data-a="obskip" style="padding:0">Passer</button>':'<span class="ibs"></span>';
   const head=`<div class="obt">${back}${bars}${skip}</div>`,nm=obd.name.trim();
   let b,f;
@@ -483,7 +483,7 @@ function viewOnb(){
     f='<button class="p obn" data-a="ob:4">Continuer</button>';
   }else{
     const kd={anime:'Animes',manga:'Mangas',both:'Animes et mangas'}[obd.k]||'';
-    b=`<div class="obdn"><svg viewBox="0 0 120 120" width="120" height="120"><circle class="ring" cx="60" cy="60" r="52" fill="none" stroke="var(--ac)" stroke-width="5" stroke-linecap="round" transform="rotate(-90 60 60)"/><path class="chk" d="M38 62l16 16 30-34" fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="obh" style="text-align:center">${editP?'Profil mis à jour':'Bienvenue, '+esc(nm)+' !'}</div><div class="card obcard">${avatar({name:nm,av:obd.av},64)}<div class="sp"><div class="t" style="font-size:20px">${esc(nm)}</div><div class="mu">${kd}</div></div></div>${obd.g.length?`<div class="gc2" style="justify-content:center">${obd.g.slice(0,6).map(g=>`<span class="chp on">${g}</span>`).join('')}</div>`:''}`;
+        b=`<div class="obfin"><div class="ofav"><svg class="ofr" viewBox="0 0 140 140"><circle class="ofrg" cx="70" cy="70" r="64" fill="none" stroke="var(--ac)" stroke-width="5" stroke-linecap="round" transform="rotate(-90 70 70)"/></svg><div class="ofa">${avatar(obPrev(),112)}</div>${[0,1,2,3,4,5,6,7].map(x=>`<i class="ofs" style="--a:${x*45}deg"></i>`).join('')}<span class="ofk">${ico('check',18)}</span></div><div class="obh">${editP?'Profil mis à jour':'Bienvenue, '+esc(nm)+' !'}</div><div class="mu ofm">${kd}</div>${obd.g.length?`<div class="ofc">${obd.g.slice(0,6).map((g,x)=>`<span class="chp on" style="--i:${x}">${g}</span>`).join('')}</div>`:''}</div>`;
     f=`<button class="p obn" data-a="obdone">${editP?'Enregistrer':'C’est parti'}</button>`;
   }
     return `<div class="obtint" style="${obSt()}"></div><div class="obw" style="${obSt()}">${head}${b}</div><div class="obf" style="${obSt()}">${f}</div>`;
