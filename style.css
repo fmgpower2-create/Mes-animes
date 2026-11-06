@@ -299,4 +299,19 @@ button{transition:transform .12s ease,background .2s,color .2s,opacity .2s}butto
 /* ---------- 11. Création du profil : écran 2 ---------- */
 .obh+.obgr{margin-top:22px}
 .obgr{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.obgr .chp{justify-content:center;min-width:0;padding:15px 10px;font-size:16px;transition:background .2s,color .2s,border-color .2s
+.obgr .chp{justify-content:center;min-width:0;padding:15px 10px;font-size:16px;transition:transform .12s ease,background .2s,color .2s,border-color .2s}
+
+
+/* ---------- 12. Création du profil : écran 3 ---------- */
+@keyframes prp{0%{transform:scale(.6)}60%{transform:scale(1.18)}100%{transform:scale(1)}}
+.obh+.pref{margin-top:22px}
+.pref{transition:transform .15s ease,border-color .25s,background .25s;animation:up .45s cubic-bezier(.2,.8,.2,1) backwards}
+.pref:nth-of-type(2){animation-delay:.08s}
+.pref:nth-of-type(3){animation-delay:.16s}
+.pref:active{transform:scale(.98)}
+.pref .pi2{transition:background .25s,color .25s}
+.pref.on .pi2{background:var(--ac);color:var(--onac,#fff);animation:prp .4s ease}
+.prk{width:26px;height:26px;border-radius:50%;border:2px solid var(--bd);display:flex;align-items:center;justify-content:center;flex:none;transition:background .25s,border-color .25s}
+.pref.on .prk{background:var(--ac);border-color:var(--ac);color:var(--onac,#fff);animation:prp .4s ease}
+.prk .ic path{stroke-dasharray:24;stroke-dashoffset:24;animation:draw .35s .1s ease forwards}
+@media(prefers-reduced-motion:reduce){.prk .ic path{stroke-dashoffset:0!important}}
