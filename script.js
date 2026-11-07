@@ -322,21 +322,30 @@ async function loadNE(){if(Date.now()-neAt<36e5)return;const ids=S.items.filter(
   try{const d=await gql('query($i:[Int]){Page(perPage:50){media(id_in:$i,type:ANIME){id status nextAiringEpisode{episode airingAt}}}}',{i:ids});NE={};d.Page.media.forEach(m=>{NE[m.id]=m.status==='RELEASING'&&m.nextAiringEpisode?m.nextAiringEpisode:null});if(page==='home')render()}catch(e){neAt=Date.now()-36e5+6e4}}
 function neCards(A){const L=A.filter(a=>a.kind==='anime'&&a.status==='cours'&&a.aid&&NE[a.aid]).map(a=>{const n=NE[a.aid],left=Math.max(0,n.episode-1-(+a.ep||0)),ms=n.airingAt*1000-Date.now(),d=Math.floor(ms/864e5),hh=Math.floor(ms%864e5/36e5);return {a,left,ms,txt:ms<=0?'Sort maintenant':'Ép. '+n.episode+' dans '+(d>0?d+' j ':'')+hh+' h'}}).sort((x,y)=>x.ms-y.ms);
   return L.map(({a,left,txt})=>`<div class="card row" data-a="sh:${a.id}" style="cursor:pointer"><div class="sp"><div class="t">${esc(a.title)}</div><div class="mu">${txt}</div></div>${left>0?`<b style="color:var(--ok)">+${left} à voir</b>`:''}</div>`).join('')}
+function homeTop(A){
+  const u=S.user||{name:''};
+  let h=`<div class="hmt">${avatar(u,48)}<div class="hmn">Salut, ${esc(u.name)}</div></div>`;
+  const hh=(S.hist||[]).slice().reverse().find(x=>{const b=byId(x.id);return x.k==='ep'&&b&&b.status==='cours'&&A.includes(b)});
+  const a=hh?byId(hh.id):A.find(x=>x.status==='cours');
+  if(!a)return h;
+  const bg=a.poster?`background-image:linear-gradient(180deg,rgba(14,11,12,.1) 20%,rgba(14,11,12,.92)),url('${a.poster}')`:`background:linear-gradient(145deg,hsl(${hue(a.title)},55%,34%),hsl(${(hue(a.title)+50)%360},55%,14%))`;
+  const pct=a.total?Math.min(100,Math.round((+a.ep||0)/a.total*100)):0;
+  return h+`<div class="hmc" style="${bg}" data-a="sh:${a.id}"><div class="hmtt">${esc(dn(a))}</div>${pct?`<div class="bar"><i style="width:${pct}%"></i></div>`:''}<button class="p ctb hmb" data-a="ep:${a.id}">${ico('play',18,1)} Reprendre · ${U(a.kind)} ${(+a.ep||0)+1}</button></div>`;
+}
 function viewHome(){
   const all=S.items,A=all.filter(a=>hk==='all'||a.kind===hk),td=(new Date().getDay()+6)%7;
-  let h='<div class="fl" style="margin-top:4px">'+[['all','Tout'],['anime','Animes'],['manga','Mangas']].map(([k,l])=>`<button data-a="hk:${k}" class="${hk===k?'on':''}">${l}</button>`).join('')+'</div>';
+  let h=homeTop(A)+'<div class="fl" style="margin-top:4px">'+[['all','Tout'],['anime','Animes'],['manga','Mangas']].map(([k,l])=>`<button data-a="hk:${k}" class="${hk===k?'on':''}">${l}</button>`).join('')+'</div>';
   if(!all.length)return h+block('go','Commencer à regarder',null,null,ctaCard());
   loadNE();
   const run=A.filter(a=>a.status==='cours'),vo=A.filter(a=>a.status==='voir');
-  {const nc=neCards(A);if(nc)h+=block('ne','Prochains épisodes',null,null,nc)}
   if(run.length)h+=block('run','Continuer à regarder',null,'pg:lib',`<div class="hs">${run.map(ccard).join('')}</div>`);
-  h+=block('go','Commencer à regarder',null,null,vo.length?hsr(vo.map(a=>tile(a,'sh:'+a.id,'m'))):ctaCard());
+  {const nc=neCards(A);if(nc)h+=block('ne','Prochains épisodes',null,null,nc)}
   const T=streak();
   h+=`<div class="stk" data-a="pg:me">${ico('flame',44,1)}<b>${T.n} jour${T.n>1?'s':''} série</b><div class="sbars">${T.last.map((x,i)=>`<i class="${x?'on':''}${i===6?' td':''}"></i>`).join('')}</div>${ico('chev',20)}</div>`;
   const pl=A.filter(a=>a.day!==''&&a.day!=null&&a.status!=='fini'&&(hf==='all'||a.status===hf)).map(a=>({a,d:(a.day-td+7)%7})).sort((x,y)=>x.d-y.d);
   const dot={cours:'#ffb020',voir:'#2d9cdb',pause:'#9a96a3'};
   h+=block('cal','Calendrier',null,'pg:plan','<div class="fl">'+[['all','Tous'],['cours','En cours'],['voir','À voir']].map(([k,l])=>`<button data-a="hf:${k}" class="${hf===k?'on':''}">${l}</button>`).join('')+'</div>'+(pl.length?hsr(pl.map(({a,d})=>lcard(a,pill(ico('cal',14)+' '+(d===0?'Aujourd’hui':d===1?'Demain':'Dans '+d+' jours'))+pill(ST[a.status],dot[a.status]),U(a.kind)+' '+((+a.ep||0)+1),'sh:'+a.id,a.status==='cours'))):'<div class="card mu">Rien de prévu. Ouvre un titre et choisis un jour de visionnage.</div>'));
-  if(typeof loadD==='function'&&D.reco&&D.reco.length)h+=block('reco','Recommandés',null,'pg:disc',hsr(D.reco.map(m=>mt2(m))));
+  h+=block('go','Commencer à regarder',null,null,vo.length?hsr(vo.map(a=>tile(a,'sh:'+a.id,'m'))):ctaCard());
   const H=histCards(hk);
   if(H.length)h+=block('his','Historique',null,null,hsr(H));
   return h+block('rk','Classements',null,'pg:tops',rankCards());
