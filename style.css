@@ -356,3 +356,12 @@ body{padding-bottom:120px}
 .avs,.obsy,.obpw{animation:up .35s cubic-bezier(.2,.8,.2,1) backwards}
 .avo .ic path{stroke-dasharray:24;stroke-dashoffset:24;animation:draw .3s ease forwards}
 @media(prefers-reduced-motion:reduce){.avo .ic path{stroke-dashoffset:0!important}}
+
+
+/* ---------- 16. Recadrage de la photo de profil ---------- */
+.crpw{position:fixed;inset:0;z-index:40;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;padding:24px}
+.crph{font-size:22px;font-weight:800}
+.crpc{border-radius:50%;touch-action:none;cursor:grab;box-shadow:0 0 0 3px var(--ac)}
+#crpz{padding:0;border:0;background:none;margin:0;accent-color:var(--ac)}
+.crpb{display:flex;gap:10px;width:100%;max-width:320px}
+.crpb button{flex:1;padding:16px;border-radius:999px;font-size:17px;font-weight:700}
