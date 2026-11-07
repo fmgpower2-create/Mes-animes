@@ -139,7 +139,7 @@ function tieSheet(){const a=byId(tie.a),b=byId(tie.b);
   return `<div class="ov"></div><div class="sheet"><div class="grab"></div><div class="big2">Égalité à ${fs(a.score)}/10</div><div class="mu" style="margin-bottom:10px">Un seul titre peut avoir cette note. Touche celui que tu préfères : l’autre passe au milieu, entre cette note et celle juste en dessous.</div><div class="vs">${tile(a,'tw:'+a.id)}<b>VS</b>${tile(b,'tw:'+b.id)}</div></div>`}
 const $=id=>document.getElementById(id);
 
-function resize(f){return new Promise(r=>{const fr=new FileReader();fr.onload=()=>{const im=new Image();im.onload=()=>{const w=200,h=Math.round(im.height*w/im.width),c=document.createElement('canvas');c.width=w;c.height=h;c.getContext('2d').drawImage(im,0,0,w,h);r(c.toDataURL('image/jpeg',.7))};im.onerror=()=>r('');im.src=fr.result};fr.readAsDataURL(f)})}
+function resize(f){return new Promise(r=>{const fr=new FileReader();fr.onload=()=>{const im=new Image();im.onload=()=>{const w=400,h=Math.round(im.height*w/im.width),c=document.createElement('canvas');c.width=w;c.height=h;c.getContext('2d').drawImage(im,0,0,w,h);r(c.toDataURL('image/jpeg',.7))};im.onerror=()=>r('');im.src=fr.result};fr.readAsDataURL(f)})}
 function fix(d){if(d.total&&d.ep!==''&&d.ep>=d.total){d.ep=d.total;d.status='fini'}return d}
 
 function form(a,p,k,sh){
@@ -583,7 +583,7 @@ function render(){
 const GFR={'Action':'Action','Adventure':'Aventure','Comedy':'Comédie','Drama':'Drame','Fantasy':'Fantasy','Horror':'Horreur','Mystery':'Mystère','Romance':'Romance','Sci-Fi':'Science-fiction','Slice of Life':'Tranche de vie','Sports':'Sport','Supernatural':'Surnaturel','Thriller':'Thriller','Psychological':'Psychologique','Mecha':'Mecha','Music':'Musique','Mahou Shoujo':'Magical girl'};
 const en2fr=g=>GFR[g]||g;
 const fr2en=g=>{g=(g||'').trim().toLowerCase();for(const k in GFR)if(GFR[k].toLowerCase()===g||k.toLowerCase()===g)return k;return ''};
-const MF='id title{romaji english} seasonYear startDate{year} episodes chapters genres averageScore popularity bannerImage format status nextAiringEpisode{airingAt episode} coverImage{large} externalLinks{site type}';
+const MF='id title{romaji english} seasonYear startDate{year} episodes chapters genres averageScore popularity bannerImage format status nextAiringEpisode{airingAt episode} coverImage{large:extraLarge} externalLinks
 async function gql(query,variables){
   const r=await fetch('https://graphql.anilist.co',{method:'POST',headers:{'Content-Type':'application/json',Accept:'application/json'},body:JSON.stringify({query,variables})});
   const j=await r.json();if(j.errors)throw new Error('gql');return j.data;
@@ -826,4 +826,21 @@ document.addEventListener('click',e=>{
 render();
 fbInit();
 if(S.user)loadD();
+let hdBusy=false;
+async function upHD(){
+  if(hdBusy||!S||!S.items)return;
+  const L=S.items.filter(a=>a.aid&&a.poster&&a.poster.startsWith('http')&&!a.hd);
+  if(!L.length)return;hdBusy=true;
+  try{
+    for(let i=0;i<L.length;i+=50){
+      const B=L.slice(i,i+50),d=await gql('query($i:[Int]){Page(perPage:50){media(id_in:$i){id coverImage{extraLarge}}}}',{i:B.map(a=>a.aid)}),M={};
+      d.Page.media.forEach(m=>{if(m.coverImage&&m.coverImage.extraLarge)M[m.id]=m.coverImage.extraLarge});
+      B.forEach(a=>{if(M[a.aid]){a.poster=M[a.aid];a.hd=1}});
+    }
+    save();
+    if(!openId&&!dsel&&!adding&&!duel&&!tie&&!dgr)render();
+  }catch(e){}
+  hdBusy=false;
+}
+setTimeout(upHD,4000);
 if('serviceWorker' in navigator&&location.protocol.indexOf('http')===0)navigator.serviceWorker.register('sw.js').catch(()=>{});
